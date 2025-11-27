@@ -1,7 +1,7 @@
 
 
 
-
+## 宣言
 ```python
 #!/bin/python3
 
@@ -37,7 +37,7 @@ import sys
 
 
 以下が記述部分
-## 実際のコード
+## 実際の記述部分コード
 ```python
 
 #
@@ -71,7 +71,7 @@ def nonDivisibleSubset(k, s):
 ```
 min(A,B)やmax(A,B)でAとBを比較して最小，最大の値を返す．
 
-
+## 実効部分
 ```python 
     
 
