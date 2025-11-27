@@ -1,46 +1,93 @@
-Given a set of distinct integers, print the size of a maximal subset of  where the sum of any  numbers in  is not evenly divisible by .
 
-Example
- 
 
-One of the arrays that can be created is . Another is . After testing all permutations, the maximum length solution array has  elements.
 
-Function Description
 
-Complete the nonDivisibleSubset function in the editor below.
+```python
+#!/bin/python3
 
-nonDivisibleSubset has the following parameter(s):
+import math
+import os
+import random
+import re
+import sys
 
-int S[n]: an array of integers
-int k: the divisor
-Returns
+```
+## 手法の確立
+問題文から，まず手法を確立する．
+ある配列において，ある数同士（２つ）の和がkで割り切れるかどうかは，その数たちのkによる余りで決まる．
+- 余りを見れば，その和が割り切れるか否かわかる．
+    * a+bが割り切れるかは，aとbのあまりの和が0になるか否かである．
+- 足したときに0になるのは，あまりがrとk-rの組に分けれる
+    * mod7において3と4は足したら0になっちゃう．
+    * もちろんどちらかの組のみが取り出し可能．どちらも取り出すと余りの和が0になってしまう
+    * 多いほうを取り出せばいい．
+- 実際の余りのクラスによる処理
+    * 余りが0のクラスは２つ選択は不可能なので１つのみ
+    * kが偶数のとき
+        + 余りがk//2のときは余りがk//2であるなかから1つだけ選べる．
+        + rをk//2が最大値として分ける．（rとk-rの組に）
+    * kが奇数のとき
+        + rをk//2+1が最大値で分ける．（rとk-rの組に）
+### ポイント
+- 余りを考えると，aとbそれぞれの余りに着目すればよくなる．
 
-int: the length of the longest subset of  meeting the criteria
-Input Format
+- その余りどうしを足して0になるグループでは１つしか選べない．
 
-The first line contains  space-separated integers,  and , the number of values in  and the non factor.
-The second line contains  space-separated integers, each an , the unique values of the set.
+- ある余りともう片方の余りを足して0になるグループでも１つしか選べない．
 
-Constraints
 
-All of the given numbers are distinct.
-Sample Input
+以下が記述部分
+## 実際のコード
+```python
 
-STDIN    Function
------    --------
-4 3      S[] size n = 4, k = 3
-1 7 2 4  S = [1, 7, 2, 4]
-Sample Output
+#
+# Complete the 'nonDivisibleSubset' function below.
+#
+# The function is expected to return an INTEGER.
+# The function accepts following parameters:
+#  1. INTEGER k
+#  2. INTEGER_ARRAY s
+#
 
-3
-Explanation
+def nonDivisibleSubset(k, s):
+    counts = [0] * k
+    #countsの中身が各要素をkで割った時の余りになる．
+    for num in s:
+        counts[num % k] += 1
 
-The sums of all permutations of two elements from  are:
+    #counts[0]，余りが0のやつは一つしか選べない
+    result = min(counts[0], 1)
+    #偶数，奇数における条件
+    upper = (k // 2) if (k % 2 == 0) else (k // 2 + 1)
+    for i in range(1, upper):
+        result += max(counts[i], counts[k - i])
 
-1 + 7 = 8
-1 + 2 = 3
-1 + 4 = 5
-7 + 2 = 9
-7 + 4 = 11
-2 + 4 = 6
-Only  will not ever sum to a multiple of .
+    #偶数で，kの半分の値は，足したら0になっちゃうから1つしか選べない．    
+    if k % 2 == 0:
+        result += min(counts[k // 2], 1)
+
+    return result
+    
+```
+min(A,B)やmax(A,B)でAとBを比較して最小，最大の値を返す．
+
+
+```python 
+    
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    first_multiple_input = input().rstrip().split()
+
+    n = int(first_multiple_input[0])
+
+    k = int(first_multiple_input[1])
+
+    s = list(map(int, input().rstrip().split()))
+
+    result = nonDivisibleSubset(k, s)
+
+    fptr.write(str(result) + '\n')
+
+    fptr.close()
